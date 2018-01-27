@@ -3,7 +3,7 @@
 
 class ModelConfig :
 
-    IS_TEST = False
+    IS_TEST = True
 
     CELL_TYPE = 'LSTM'
     NUM_LAYERS = 2

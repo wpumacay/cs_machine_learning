@@ -122,6 +122,8 @@ class DataUtils :
                     self.m_vocab[ _line[ :-1 ] ] = _indx
                     _indx += 1
 
+            self.m_invVocab = dict( zip( self.m_vocab.values(), self.m_vocab.keys() ) )
+
             with open( 'preprocessed/data_lineids_enc.txt', 'r' ) as _fileHandle :
                 _lines = _fileHandle.readlines()
 
@@ -339,11 +341,66 @@ class DataUtils :
         return _sentIds
 
 
+    def id2sentence( self, seqids ) :
+
+        _sentence = []
+
+        for _id in seqids :
+            _sentence.append( self.m_invVocab[ _id ] )
+
+        return ' '.join( _sentence )
+
     def _padSequence( self, sequence, size ) :
         if len( sequence ) > size :
             return sequence[ 0:size ]
         return sequence + [ self.m_vocab[ DataConfig.TOKEN_PAD ] ] * ( size - len( sequence ) )
 
+    def decoderOut2ids( self, decOut ) :
+
+        _sequenceIds = []
+
+        # Choose the words with the highest prediction score
+        for _out in decOut :
+
+            _sequenceIds.append( np.argmax( _out ) )
+
+        return _sequenceIds
+
+    def getTestBatch( self, encSequence ) : # generate a single size=1 batch in the adecuate format
+        
+        _encoderInputs, _decoderInputs, _decoderTargets = [], [], []
+
+        for _ in range( 1 ) :
+            # get a random training example from the global data
+            _encoderInput = encSequence
+            _decoderInput = [ self.m_vocab[ DataConfig.TOKEN_START ] ] + [ self.m_vocab[ DataConfig.TOKEN_END ] ]
+            _decoderTarget = _decoderInput[ 1: ] # these are not used in the model
+
+            _encoderInputs.append( list( reversed( self._padSequence( _encoderInput, ModelConfig.INPUT_SEQUENCE_LENGTH ) ) ) )
+            _decoderInputs.append( self._padSequence( _decoderInput, ModelConfig.OUTPUT_SEQUENCE_LENGTH ) )
+            _decoderTargets.append( self._padSequence( _decoderTarget, ModelConfig.OUTPUT_SEQUENCE_LENGTH ) )
+
+        _batchEncoderInputs = self._reshapeBatch( _encoderInputs, ModelConfig.INPUT_SEQUENCE_LENGTH, 1 )
+        _batchDecoderInputs = self._reshapeBatch( _decoderInputs, ModelConfig.OUTPUT_SEQUENCE_LENGTH, 1 )
+        _batchDecoderTargets = self._reshapeBatch( _decoderTargets, ModelConfig.OUTPUT_SEQUENCE_LENGTH, 1 )
+
+        _batchMasks = []
+
+        for length_id in range( ModelConfig.OUTPUT_SEQUENCE_LENGTH ) :
+
+            _batchMask = np.ones( 1, dtype = np.float32 )
+            for batch_id in range( 1 ):
+                # we set mask to 0 if the corresponding target is a PAD symbol.
+                # the corresponding decoder is decoder_input shifted by 1 forward.
+                if length_id < ModelConfig.OUTPUT_SEQUENCE_LENGTH - 1 :
+                    target = _decoderInputs[batch_id][length_id + 1]
+
+                if length_id == ModelConfig.OUTPUT_SEQUENCE_LENGTH - 1 or target == self.m_vocab[ DataConfig.TOKEN_PAD ] :
+                    _batchMask[batch_id] = 0.0
+
+            _batchMasks.append( _batchMask )
+
+        return _batchEncoderInputs, _batchDecoderInputs, _batchDecoderTargets, _batchMasks        
 
     # like transposing the matrix
     def _reshapeBatch( self, inputs, size, batchSize ) :

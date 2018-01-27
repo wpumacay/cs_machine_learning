@@ -31,41 +31,57 @@ def testData() :
 
 def _get_user_input():
     """ Get user's input, which will be transformed into encoder input later """
-    print( "> ", end="" )
+    print( "> " )
     sys.stdout.flush()
     return sys.stdin.readline()
 
-# def testChatbot() :
+def testChatbot() :
 
-#     _dataHandler = dataUtils.DataUtils( config.DataConfig.CURRENT_DATASET_ID )
+    _dataHandler = dataUtils.DataUtils( config.DataConfig.CURRENT_DATASET_ID )
 
-#     _model = modelSeq2Seq.Seq2SeqModel( _dataHandler )    
+    _model = modelSeq2Seq.Seq2SeqModel( _dataHandler )    
 
-#     _saver = tf.train.Saver()
+    _saver = tf.train.Saver()
 
-#     with tf.Session() as sess :
+    with tf.Session() as sess :
 
-#         _checkForRestoration( sess, _saver )
+        sess.run( tf.global_variables_initializer() )
+        _checkForRestoration( sess, _saver )
 
-#         print( 'Chatbot-seq2seq ############################' )
+        print( 'Chatbot-seq2seq ############################' )
 
-#         while True :
+        while True :
 
-#             _line = _get_user_input()
+            _line = _get_user_input()
 
-#             if len( _line ) > 0 and _line[-1] == '\n':
-#                 line = line[:-1]
+            if len( _line ) > 0 and _line[-1] == '\n':
+                _line = _line[:-1]
 
-#             if line == '':
-#                 break
+            if _line == '':
+                break
 
-#             _sentIds = _dataHandler.sentence2id( str( _line ) )
+            _sentIds = _dataHandler.sentence2id( str( _line ) )
 
-#             if ( len( _sentIds ) > config.ModelConfig.INPUT ) :
-#                 print( 'sentence too long :(' )
-#                 continue
+            if ( len( _sentIds ) > config.ModelConfig.INPUT_SEQUENCE_LENGTH ) :
+                print( 'sentence too long :(' )
+                continue
 
+            _encIns, _decIns, _decTargets, _decMasks = _dataHandler.getTestBatch( _sentIds )
 
+            _batch = {}
+            _batch['encoderSeqs'] = _encIns
+            _batch['decoderSeqs'] = _decIns
+            _batch['targetSeqs'] = _decTargets
+            _batch['weights'] = _decMasks
+
+            _ops, _feedDict = _model.step( _batch )
+            _output = sess.run( _ops[0], _feedDict )
+
+            _ids = _dataHandler.decoderOut2ids( _output )
+
+            _response = _dataHandler.id2sentence( _ids )
+
+            print( 'answer> ', _response )
 
 def trainChatbot() :
 

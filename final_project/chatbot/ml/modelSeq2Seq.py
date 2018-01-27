@@ -3,7 +3,7 @@
 
 import numpy as np
 import tensorflow as tf
-from config import ModelConfig
+from config import ModelConfig, DataConfig
 
 class ProjectionOp :
 
@@ -206,9 +206,9 @@ class Seq2SeqModel :
         else :
 
             for i in range( ModelConfig.INPUT_SEQUENCE_LENGTH ) :
-                _feedDict[ ModelConfig.m_encoderInputs[ i ] ] = batch['encoderSeqs'][ i ]
+                _feedDict[ self.m_encoderInputs[ i ] ] = batch['encoderSeqs'][ i ]
 
-            _feedDict[ self.m_decoderInputs[0] ] = [ self.m_textData.GO_TOKEN ]
+            _feedDict[ self.m_decoderInputs[0] ] = [ self.m_textData.m_vocab[ DataConfig.TOKEN_START ] ]
 
             ops = ( self.m_outputs, )
 
