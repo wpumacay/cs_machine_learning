@@ -27,7 +27,7 @@ The use of RNNs for these kind of tasks is described in various sources, an basi
 
 Next, we will analyze each component of the model :
 
-##Encoder
+## Encoder
 
 * Word embeddings :
 
@@ -72,7 +72,7 @@ Some sequences may be shorter than the input-sequence, so we use padding to make
 
 ![encoderPadding](_img/img_encoderPadding.jpg)
 
-##RNN cells :
+## RNN cells :
 
 There are some options as to what kind of cell to use in our RNN, which could be a vanilla RNN cell, an LSTM cell and a GRU cell.
 
@@ -104,7 +104,7 @@ And a GRU cell looks like this :
 
 GRU cells are quite similar in performance to LSTM cells, but their upside is that they perform less computation that LSTMs.
 
-##Decoder
+## Decoder
 
 Once the thought vector is generated in the last iteration of the encoder we can use it in the decoder to generate the output sequence. The thought vector is fed as the first hidden state of the decoder cell and a start token is fed as first input to the same cell. 
 
@@ -196,11 +196,19 @@ We then create the seq2seq model itself, using the tensorflow API :
                                                         feed_previous = ModelConfig.IS_TEST )
 ```
 
+This creates the actual seq2seq architecture, with the following :
+
+* We pass the encoder inputs and outputs placeholders, as well as the cell previously defined.
+* We pass the vocabulary size for both encoder and decoder. As you can see, in our case these are the same size. This is used as the dimensions for the embedings matrices craeted for the encoder and decoder lookup steps.
+* We also pass the embeddings size to complete the definition of the embeddings matrices.
+* We then pass the weights of the output projection step, in case we are using sampled softmax. If not using this, we just pass None.
+* Finally, we pass a boolean to set whether or not we are in test mode. If so, we then feed the previos output prediction to the next input in the encoder, as described earlier. If not, we are just passing the targets as inputs.
+
 If using the attention mechanism, we create the model using tf's **embedding_attention_seq2seq**. If not, we create the model with **embedding_rnn_seq2seq**. 
 
 As the name suggests, the model is created with embeddings in mind. It creates an embedding look-up layer in between both encoder inputs and decoder inputs. You can check this in tensorflows's source code :
 
-```
+```python
 ### tf's insides of embedding_rnn_seq2seq
 
 ## encoder creation snippet
@@ -332,6 +340,114 @@ Finally, the last part of the model class deals with running the model given a b
 ```
 
 Here, we create the parameters to run the session on, and the dictionary of parameters to feed to the session. If in training mode, we feed encoderInputs ( input sequence ), decoderInputs ( targets words shifted one to the right, and with the start token in the start of the sequence ), decoderTargets ( words we want to predict ) and decoderWeights ( masks to use if deadling with padded tokens ).
+
+### Data handling
+
+The dataset used was the [**Cornell movie-dialogs dataet**](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html), which was parsed into an appropiate structure using the [dataUtils.py](ml/dataUtils.py) file.
+
+```python
+    def _parseCornellDataset( self ) :
+
+        if not DataConfig.USE_PREPROCESSED :
+
+            _id2line = self._pcGetLines()
+            _convSequences = self._pcGetConvSequences()
+            self.m_encLines, self.m_decLines = self._pcGetQAs( _id2line, _convSequences )
+
+            self._buildVocabulary( self.m_encLines, self.m_decLines )
+            self.m_encSeqs, self.m_decSeqs = self._lines2ids( self.m_encLines, self.m_decLines )
+
+            self._saveDataset()
+
+        else :
+
+        # load the pre-processed dataset
+```
+
+We first parse the data into 2 structures: **\_id2line** and **\_convSequences**. The first is a dictionary that contains all the lines in the conversations corpus mapped to some key. The second is just an array of arrays, each subarray being a conversation sequence with ids representing the ids to map to the actual conversation lines in the dictionary mentioned.
+
+We then parse this structures into 2 lists of the same size : **encoderLines** ( questions ) and **decoderLines** ( answers ).
+
+Here, the data was given in a one-to-one fashion in turns. One person says something, and then the other person says a response.
+
+Once we have these questions and answers lists, we can parse them and build our vocabulary. We check for every word in each tokenized-line in each list, and if it is not in the dictionary, we add it only if its frequency passes a certain ocurrence threshold ( 5 by default ). Also, the first 4 elements to our dictionary are the previosly mentioned special tokens ( pad, unknown, start and end ).
+
+Finally, we just use this vocabulary and the QAs lists from before and generate the actual encoder-decoder sequences with integers as their elements, filtering the words using the dictionary. If a word is not in the dictionary, we simply add the unknown token. These two structures will be used whenever we need to take a batch to feed to the model during a training or testing session.
+
+The resulting vocabulary using the default cutoff threhsold has a size of 49250 words, and can be generated by using the _dump_ methods in the data handler class.
+
+We then need 2 methods to convert back and forth between a line sentence made of actual words, and the actual ids to pass to our model.
+
+```python
+    def sentence2id( self, sentence ) :
+        _sentIds = []
+
+        for _token in self._pcTokenizer( sentence ) :
+            if _token in self.m_vocab :
+                _sentIds.append( self.m_vocab[ _token ] )
+            else :
+                _sentIds.append( self.m_vocab[ DataConfig.TOKEN_UNKNOWN ] )
+
+        return _sentIds
+
+
+    def id2sentence( self, seqids ) :
+
+        _sentence = []
+
+        for _id in seqids :
+            _sentence.append( self.m_invVocab[ _id ] )
+
+        return ' '.join( _sentence )
+```
+
+
+Finally, we have our batch retrieval methods. First, we have the training batch retrieval method :
+
+```python
+    def getBatch( self, batchSize ) :
+
+        _encoderInputs, _decoderInputs, _decoderTargets = [], [], []
+
+        for _ in range( batchSize ) :
+            # get a random training example from the global data
+            _indx = random.randint( 0, len( self.m_encSeqs ) - 1 )
+            _encoderInput = self.m_encSeqs[ _indx ]
+            _decoderInput = self.m_decSeqs[ _indx ]
+            _decoderTarget = _decoderInput[ 1: ]
+
+            _encoderInputs.append( list( reversed( self._padSequence( _encoderInput, ModelConfig.INPUT_SEQUENCE_LENGTH ) ) ) )
+            _decoderInputs.append( self._padSequence( _decoderInput, ModelConfig.OUTPUT_SEQUENCE_LENGTH ) )
+            _decoderTargets.append( self._padSequence( _decoderTarget, ModelConfig.OUTPUT_SEQUENCE_LENGTH ) )
+
+        _batchEncoderInputs = self._reshapeBatch( _encoderInputs, ModelConfig.INPUT_SEQUENCE_LENGTH, batchSize )
+        _batchDecoderInputs = self._reshapeBatch( _decoderInputs, ModelConfig.OUTPUT_SEQUENCE_LENGTH, batchSize )
+        _batchDecoderTargets = self._reshapeBatch( _decoderTargets, ModelConfig.OUTPUT_SEQUENCE_LENGTH, batchSize )
+
+        _batchMasks = []
+
+        for length_id in range( ModelConfig.OUTPUT_SEQUENCE_LENGTH ) :
+
+            _batchMask = np.ones( batchSize, dtype = np.float32 )
+            for batch_id in range( batchSize ):
+                # we set mask to 0 if the corresponding target is a PAD symbol.
+                # the corresponding decoder is decoder_input shifted by 1 forward.
+                if length_id < ModelConfig.OUTPUT_SEQUENCE_LENGTH - 1 :
+                    target = _decoderInputs[batch_id][length_id + 1]
+
+                if length_id == ModelConfig.OUTPUT_SEQUENCE_LENGTH - 1 or target == self.m_vocab[ DataConfig.TOKEN_PAD ] :
+                    _batchMask[batch_id] = 0.0
+
+            _batchMasks.append( _batchMask )
+
+        return _batchEncoderInputs, _batchDecoderInputs, _batchDecoderTargets, _batchMasks
+```
+
+In here we create the training batch, which consists of the data needed to be fed to the model as explained earlier ( encoder-decoder inputs, targets and masks ).
+
+In here we padd the sequences as well as transpose-resize the model into batch-major form, which is just transposing from a list of lists of sequences to a ... well, transposed of this ( use prints or a debugger to see the result. I recommend pycharm :D. You will see the actual transposition ).
+
+Finally, if we are in test mode, we used the special **getTestBacth** method, which return what we need to feed in test mode. In that case we don't need targets. For the decoder inputs we just need the start token, and we still keep the masks for padded sequences.
 
 ## <a name="section3"></a> Results and thoughts
 
