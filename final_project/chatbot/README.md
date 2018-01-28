@@ -80,4 +80,4 @@ The vanilla RNNs have as single computing unit the following RNN cell :
 
 ![rnnVanillaCell](_img/img_rnnVanillaCell.jpg)
 
-![rnnVanillaComputation](https://www.codecogs.com/eqnedit.php?latex=h_{t}&space;=&space;tanh(&space;W_{x}&space;x_{t}&space;&plus;&space;W_{h}&space;h_{t-1})
+![rnnVanillaComputation](https://www.codecogs.com/eqnedit.php?latex=h_{t}&space;=&space;tanh(&space;W_{x}&space;x_{t}&space;&plus;&space;W_{h}&space;h_{t-1}))
