@@ -1,4 +1,4 @@
-## BASED ON ( almost copy ) Conchylicultor's implementation
+## BASED ON Conchylicultor's implementation
 ## see https://github.com/Conchylicultor/DeepQA
 
 import numpy as np
