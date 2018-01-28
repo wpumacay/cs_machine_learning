@@ -62,4 +62,22 @@ Of course, there are implementations that use dynamic sequence length, as descri
 
 * Padding :
 
-Some sequences may be shorter than the input-sequence, so we use padding to make this fit into the encoder's input size. Basically, if the sentence "hey bro, how are you?" is split into "[ 'hey', 'bro', 'how', 'are', 'you', '?' ]", and then converted into "[ 10, 25, 454, 123, 657, 1087 ]" we can pad it to a size of 10 by adding the remaining slots as '0' ( or the padding index of the padding symbol in our vocabulary ), which will become "[ 10, 25, 454, 123, 657, 1087, 0, 0, 0, 0 ]"
+Some sequences may be shorter than the input-sequence, so we use padding to make this fit into the encoder's input size. Basically, if the sentence "hey bro, how are you?" is split into "[ 'hey', 'bro', ',', 'how', 'are', 'you', '?' ]", and then converted into "[ 10, 25, 75, 454, 123, 657, 1087 ]" we can pad it to a size of 10 by adding the remaining slots as '0' ( or the padding index of the padding symbol in our vocabulary ), which will become "[ 10, 25, 75, 454, 123, 657, 1087, 0, 0, 0 ]"
+
+![encoderPadding](_img/img_encoderPadding.jpg)
+
+* RNN cells :
+
+There are some options as to what kind of cell to use in our RNN, which could be a vanilla RNN cell, an LSTM cell and a GRU cell.
+
+Recall, a RNN can be seen in an unrolled way, as show in the following picture :
+
+![rnnUnrolled](_img/img_rnnUnrolled.jpg)
+
+Each of those rectangles with an 'A' represent an RNN cell ( here, just to be clear, when they mean single cell, they mean this is a full layer of this computing cells  )
+
+The vanilla RNNs have as single computing unit the following RNN cell :
+
+![rnnVanillaCell](_img/img_rnnVanillaCell.jpg)
+
+![rnnVanillaComputation](https://www.codecogs.com/eqnedit.php?latex=h_{t}&space;=&space;tanh(&space;W_{x}&space;x_{t}&space;&plus;&space;W_{h}&space;h_{t-1})" target="_blank"><img src="https://latex.codecogs.com/gif.latex?h_{t}&space;=&space;tanh(&space;W_{x}&space;x_{t}&space;&plus;&space;W_{h}&space;h_{t-1})" title="h_{t} = tanh( W_{x} x_{t} + W_{h} h_{t-1})")
