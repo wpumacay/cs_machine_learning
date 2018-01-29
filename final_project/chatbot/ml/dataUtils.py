@@ -341,11 +341,13 @@ class DataUtils :
         return _sentIds
 
 
-    def id2sentence( self, seqids ) :
+    def id2sentence( self, seqids, breakAtStopToken = False ) :
 
         _sentence = []
 
         for _id in seqids :
+            if breakAtStopToken and self.m_invVocab[ _id ] == DataConfig.TOKEN_END :
+                break
             _sentence.append( self.m_invVocab[ _id ] )
 
         return ' '.join( _sentence )
@@ -411,6 +413,12 @@ class DataUtils :
             _batchInputs.append( np.array( [ inputs[ batch_id ][ length_id ]
                                         for batch_id in range( batchSize ) ], dtype = np.int32 ) )
         return _batchInputs
+
+    def getQuestions( self ) :
+        return self.m_encLines
+
+    def getAnswers( self ) :
+        return self.m_decLines
 
     def getBatch( self, batchSize ) :
 
