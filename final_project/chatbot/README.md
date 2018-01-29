@@ -9,11 +9,19 @@ We used tensorflow to implement the model, and based the implementation in the f
 *   [**DeepQA**](https://github.com/Conchylicultor/DeepQA) repo by Etienne Pot
 *   [**Stanford-tensorflow-tutorials**](https://github.com/chiphuyen/stanford-tensorflow-tutorials/tree/master/2017/assignments/chatbot) repo by Chip Huyen
 
+To test it, just run :
+
+    python chatbot.py
+
+Make sure the IS_TEST flag is set to true in the [config.py](ml/config.py) file. Otherwise, it will be running in training mode.
+
+Also, we are using python 2.7.
+
 There are 3 main sections :
 
 *   [About the model](#section1)
 *   [Implementation](#section2)
-*   [Results and thoughts](#section3)
+*   [Results](#section3)
 
 ## <a name="section1"></a> About the model
 
@@ -648,7 +656,7 @@ def testChatbot() :
 
 You can check here that we use the **getTestBacth** method instead, by passing the input sequence given by the user. We then transform the output of the model from ids to a string sentence using some helpers methods.
 
-## <a name="section3"></a> Results and thoughts
+## <a name="section3"></a> Results
 
 
 The last training we made was using the configuration given in the [config.py](ml/config.py) file :
