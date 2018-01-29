@@ -2,7 +2,7 @@
 
 # Making a chatbot using the Seq2Seq model
 
-This is a simple implementation of the [**sequence to sequence model**](https://arxiv.org/abs/1409.3215) to make a chatbot (based on the paper [**"A Neural conversational model"**](https://arxiv.org/abs/1506.05869) by Oriol Vinyals and Quoc Le.
+This is a simple implementation of the [**sequence to sequence model**](https://arxiv.org/abs/1409.3215) to make a chatbot (based on the paper [**"A Neural conversational model"**](https://arxiv.org/abs/1506.05869) by Oriol Vinyals and Quoc Le ).
 
 We used tensorflow to implement the model, and based the implementation in the following references :
 
@@ -62,7 +62,7 @@ Here, each word is given an id, and as you can see there are some  symbols that 
 
 * Input sequence length :
 
-We could keep feeding the encoder data, and it would happily keep encoding this data into the final vector, but the implementation we based on uses a fixed-size sequence length. This serves like the number of iterations in time that our RNN will compute. It also kind of helps when dealing with long sequences, as if some information could be split into two parts that have differente context, then the relationship between these wouldn't be mixed into a one vector, but two.
+We could keep feeding the encoder data, and it would happily keep encoding this data into the final vector, but the implementation we based on uses a fixed-size sequence length. This serves like the number of iterations in time that our RNN will compute. It also kind of helps when dealing with long sequences, as if some information could be split into two parts that have differente context, then the relationship between these wouldn't be mixed into one vector, but two.
 
 Of course, there are implementations that use dynamic sequence length, as described [**here**](https://danijar.com/variable-sequence-lengths-in-tensorflow/) and [**here**](https://r2rt.com/recurrent-neural-networks-in-tensorflow-iii-variable-length-sequences.html), or tensorflow's [**dynamic_rnn**](https://www.tensorflow.org/versions/master/api_docs/python/tf/nn/dynamic_rnn)
 
@@ -76,7 +76,7 @@ Some sequences may be shorter than the input-sequence, so we use padding to make
 
 There are some options as to what kind of cell to use in our RNN, which could be a vanilla RNN cell, an LSTM cell and a GRU cell.
 
-Recall, a RNN can be seen in an unrolled way, as show in the following picture :
+Recall, a RNN can be seen in an unrolled way, as shown in the following picture :
 
 ![rnnUnrolled](_img/img_rnnUnrolled.jpg)
 
@@ -448,6 +448,205 @@ In here we create the training batch, which consists of the data needed to be fe
 In here we padd the sequences as well as transpose-resize the model into batch-major form, which is just transposing from a list of lists of sequences to a ... well, transposed of this ( use prints or a debugger to see the result. I recommend pycharm :D. You will see the actual transposition ).
 
 Finally, if we are in test mode, we used the special **getTestBacth** method, which return what we need to feed in test mode. In that case we don't need targets. For the decoder inputs we just need the start token, and we still keep the masks for padded sequences.
+
+```python
+    def getTestBatch( self, encSequence ) : # generate a single size=1 batch in the adecuate format
+        
+        _encoderInputs, _decoderInputs, _decoderTargets = [], [], []
+
+        for _ in range( 1 ) :
+            # get a random training example from the global data
+            _encoderInput = encSequence
+            _decoderInput = [ self.m_vocab[ DataConfig.TOKEN_START ] ] + [ self.m_vocab[ DataConfig.TOKEN_END ] ]
+            _decoderTarget = _decoderInput[ 1: ] # these are not used in the model
+
+            _encoderInputs.append( list( reversed( self._padSequence( _encoderInput, ModelConfig.INPUT_SEQUENCE_LENGTH ) ) ) )
+            _decoderInputs.append( self._padSequence( _decoderInput, ModelConfig.OUTPUT_SEQUENCE_LENGTH ) )
+            _decoderTargets.append( self._padSequence( _decoderTarget, ModelConfig.OUTPUT_SEQUENCE_LENGTH ) )
+
+        _batchEncoderInputs = self._reshapeBatch( _encoderInputs, ModelConfig.INPUT_SEQUENCE_LENGTH, 1 )
+        _batchDecoderInputs = self._reshapeBatch( _decoderInputs, ModelConfig.OUTPUT_SEQUENCE_LENGTH, 1 )
+        _batchDecoderTargets = self._reshapeBatch( _decoderTargets, ModelConfig.OUTPUT_SEQUENCE_LENGTH, 1 )
+
+        _batchMasks = []
+
+        for length_id in range( ModelConfig.OUTPUT_SEQUENCE_LENGTH ) :
+
+            _batchMask = np.ones( 1, dtype = np.float32 )
+            for batch_id in range( 1 ):
+                # we set mask to 0 if the corresponding target is a PAD symbol.
+                # the corresponding decoder is decoder_input shifted by 1 forward.
+                if length_id < ModelConfig.OUTPUT_SEQUENCE_LENGTH - 1 :
+                    target = _decoderInputs[batch_id][length_id + 1]
+
+                if length_id == ModelConfig.OUTPUT_SEQUENCE_LENGTH - 1 or target == self.m_vocab[ DataConfig.TOKEN_PAD ] :
+                    _batchMask[batch_id] = 0.0
+
+            _batchMasks.append( _batchMask )
+
+        return _batchEncoderInputs, _batchDecoderInputs, _batchDecoderTargets, _batchMasks        
+```
+
+### Chatbot entry point
+
+After implementing both modules mentioned before, we can finallyuse them to make our chatbot. This is done in the [**chatbot.py**](chatbot.py) file.
+
+First, we have some helpers methods ( load tf checkpoints if any, test the data utility and get the user input when testing the chatbot ) :
+
+```python
+def _checkForRestoration( session, saver ) :
+
+    ckpt = tf.train.get_checkpoint_state( 'checkpoints/' )
+    if ckpt and ckpt.model_checkpoint_path :
+        print( "Loading parameters for the Chatbot" )
+        saver.restore( session, ckpt.model_checkpoint_path )
+    else:
+        print("Initializing fresh parameters for the Chatbot")
+
+def testData() :
+
+    _dataHandler = dataUtils.DataUtils( config.DataConfig.CURRENT_DATASET_ID )
+
+    # dump dictionary to a file
+    _dataHandler.dumpVocab()
+
+    # get a batch and show it
+    _dataHandler.dumpSampleBatch()
+
+def _get_user_input():
+    """ Get user's input, which will be transformed into encoder input later """
+    print( "> " )
+    sys.stdout.flush()
+    return sys.stdin.readline()
+```
+
+We then have the method to train the chatbot :
+
+```python
+def trainChatbot() :
+
+    _dataHandler = dataUtils.DataUtils( config.DataConfig.CURRENT_DATASET_ID )
+
+    _model = modelSeq2Seq.Seq2SeqModel( _dataHandler )
+
+    _saver = tf.train.Saver()
+
+    with tf.Session() as sess :
+        print( 'Starting training' )
+        sess.run( tf.global_variables_initializer() )
+
+        _iteration = 0
+        _totalLoss = 0
+
+        _globalStep = 0
+
+        for e in range( config.ModelConfig.NUM_EPOCHS ) :
+
+            print( "----- Epoch {}/{} ; (lr={}) -----".format( e + 1, config.ModelConfig.NUM_EPOCHS, config.ModelConfig.LEARNING_RATE ) )
+
+            _nBatches = _dataHandler.getTrainingSize() / config.ModelConfig.BATCH_SIZE
+            print( '_nBatches: ', _nBatches )
+
+            for b in tqdm( range( _nBatches ), desc = 'training: ' ) :
+
+                _encIns, _decIns, _decTargets, _decMasks = _dataHandler.getBatch( config.ModelConfig.BATCH_SIZE )
+
+                _batch = {}
+                _batch['encoderSeqs'] = _encIns
+                _batch['decoderSeqs'] = _decIns
+                _batch['targetSeqs'] = _decTargets
+                _batch['weights'] = _decMasks
+
+                _ops, _feedDict = _model.step( _batch )
+                _, _loss = sess.run( _ops, _feedDict )
+
+                _totalLoss += _loss
+                _iteration += 1
+                _globalStep += 1
+
+                if _iteration % 100 == 0 :
+                    _perplexity = math.exp( float( _loss ) ) if _loss < 300 else float( "inf" )
+                    tqdm.write("----- Step %d -- Loss %.2f -- Perplexity %.2f" % ( _iteration, _loss, _perplexity ) )
+
+                if _iteration % 400 == 0 :
+                    print( 'saved so far :o' )
+                    _saver.save( sess, 'checkpoints/chatbot', _globalStep )
+
+            print( '_totalLoss: ', _totalLoss )
+
+            _totalLoss = 0
+            _iteration = 0
+```
+
+We first instantiate our seq2seq model and load the data by instantiating the data handler :
+
+```python
+    # ...
+
+    _dataHandler = dataUtils.DataUtils( config.DataConfig.CURRENT_DATASET_ID )
+
+    _model = modelSeq2Seq.Seq2SeqModel( _dataHandler )
+
+    _saver = tf.train.Saver()
+
+    # ...
+```
+
+We then train our model in 20 epochs ( default ) by feeding batches of 256 training samples ( default as well ) to the model. You can see we are using the **getBatch** method, which will return the appropiate batch for training.
+
+At las we have the test method :
+
+```python
+def testChatbot() :
+
+    _dataHandler = dataUtils.DataUtils( config.DataConfig.CURRENT_DATASET_ID )
+
+    _model = modelSeq2Seq.Seq2SeqModel( _dataHandler )    
+
+    _saver = tf.train.Saver()
+
+    with tf.Session() as sess :
+
+        sess.run( tf.global_variables_initializer() )
+        _checkForRestoration( sess, _saver )
+
+        print( 'Chatbot-seq2seq ############################' )
+
+        while True :
+
+            _line = _get_user_input()
+
+            if len( _line ) > 0 and _line[-1] == '\n':
+                _line = _line[:-1]
+
+            if _line == '':
+                break
+
+            _sentIds = _dataHandler.sentence2id( str( _line ) )
+
+            if ( len( _sentIds ) > config.ModelConfig.INPUT_SEQUENCE_LENGTH ) :
+                print( 'sentence too long :(' )
+                continue
+
+            _encIns, _decIns, _decTargets, _decMasks = _dataHandler.getTestBatch( _sentIds )
+
+            _batch = {}
+            _batch['encoderSeqs'] = _encIns
+            _batch['decoderSeqs'] = _decIns
+            _batch['targetSeqs'] = _decTargets
+            _batch['weights'] = _decMasks
+
+            _ops, _feedDict = _model.step( _batch )
+            _output = sess.run( _ops[0], _feedDict )
+
+            _ids = _dataHandler.decoderOut2ids( _output )
+
+            _response = _dataHandler.id2sentence( _ids )
+
+            print( 'answer> ', _response )
+```
+
+You can check here that we use the **getTestBacth** method instead, by passing the input sequence given by the user. We then transform the output of the model from ids to a string sentence using some helpers methods.
 
 ## <a name="section3"></a> Results and thoughts
 
