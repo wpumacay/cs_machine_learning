@@ -1,0 +1,284 @@
+question: Machine's in?
+answerHuman: He's in.  It will be his pleasure.
+answerBot: yeah , i know .
+-------
+question: Hon?
+answerHuman: What?!
+answerBot: what ?
+-------
+question: Yeah.
+answerHuman: So you're gonna leave it on. Every night.  For a week.
+answerBot: dakota .
+-------
+question: I want to know!
+answerHuman: Barton, honestly, only the last couple-
+answerBot: rudder ' s grounded .
+-------
+question: What about the tapes?
+answerHuman: We found the originals.
+answerBot: chambers - rate crew .
+-------
+question: He's sleeping in the church.
+answerHuman: The church!
+answerBot: what ' s he got to do with it ?
+-------
+question: That's right.
+answerHuman: Then I'm doing fine.
+answerBot: figures .
+-------
+question: I know, no--  I know.
+answerHuman: I mean, y-you know, don't say it that way, you know, because my confidence is not my strong point, I--
+answerBot: i ' m sorry .
+-------
+question: I don't know. There's just things I still want to do.
+answerHuman: Like what? Be a rock star?
+answerBot: i ' m not voting for you .
+-------
+question: Plato!
+answerHuman: Just walk over here quietly now-- and there won't be any trouble.
+answerBot: das worren das das das das das das das das das das das das das das das das das das
+-------
+question: I'm leavin' the place to John.
+answerHuman: That's good: he earned it.
+answerBot: what ' s the matter ?
+-------
+question: <u>What</u> is this, a whorehouse, or are you my <u>wife</u>?
+answerHuman: You've gone off to America, on your <u>Vacation</u>...
+answerBot: i ' m not sure .
+-------
+question: What are you talking about?
+answerHuman: It skips from page nine to eleven.  Where's page ten?
+answerBot: i ' m snitching the hostages .
+-------
+question: The other one --
+answerHuman: No -- leave it --
+answerBot: i ' m punished .
+-------
+question: Home.
+answerHuman: Home, that's right.
+answerBot: you ' re sure ?
+-------
+question: I've never done this before.
+answerHuman: How have you dumped girls in the past?
+answerBot: i ' m not complainin ' .
+-------
+question: The kids are in the yahd, playing near the cah. How's that sound?
+answerHuman: Like you're from N'Yawk. 
+answerBot: not a focus .
+-------
+question: How can I?
+answerHuman: I don't know. Just help me. Give me a cigarette.
+answerBot: you ' re not going to be late .
+-------
+question: Filthy kids go to kindergarten too. What are you saying, anyhow?
+answerHuman: Nothing, I guess.  Just an observation.  She's really something special.  You're a lucky fella.
+answerBot: what do you mean ?
+-------
+question: Sort it all out.
+answerHuman: And you're going to have time.  There's been a change of plans.
+answerBot: you ' re not ?
+-------
+question: How. Did you. Know that?
+answerHuman: You told me that on Parents' Weekend. Remember? Wait, that wasn't me. Or you.
+answerBot: i told you . filet and locked .
+-------
+question: And the grass?
+answerHuman: Still got a lot of that stuff from Nha Trang. But we're running low on the other.
+answerBot: not particularly .
+-------
+question: You’re the one who got away.
+answerHuman: Until now.
+answerBot: breath !
+-------
+question: Did you feel that?
+answerHuman: Did I?  I've been waiting for that for years.
+answerBot: yes , i did .
+-------
+question: I... I...
+answerHuman: What is it, Grady?
+answerBot: you ' re lint . . . ?
+-------
+question: No, not anyone else - just me.
+answerHuman: Just you ...
+answerBot: you ' re joking .
+-------
+question: Wow...
+answerHuman: What'd you find, Kathy?
+answerBot: what do you want ?
+-------
+question: It's some sort of party the town is throwing.
+answerHuman: They do it each year.
+answerBot: you ' re joking .
+-------
+question: Come on. Booth grabs the bag --
+answerHuman: Do you have everything?
+answerBot: - - i ' m not going to do it .
+-------
+question: Seemed fine. Quiet evening enjoying his new digs.
+answerHuman: That's funny because, you know, I just went and picked him up at some flophouse on the lower eastside. He called here when he ran out of his "mad" money after spending an entire evening drinking, watching strippers, and fucking a whore!  Oh, and what did you do tonight, honey?
+answerBot: and what did you do ?
+-------
+question: He's perfect! A baseball player. What could be more American!
+answerHuman: I wish he had a family, though.
+answerBot: i ' m sorry .
+-------
+question: Were you in love with him?
+answerHuman: I thought I was.  I was confused.
+answerBot: no .
+-------
+question: What's that?
+answerHuman: Oh, let's not talk about it.
+answerBot: glasspack , i don ' t know .
+-------
+question: Oh.  Mikey, what's up?  I'm totally in the dark.
+answerHuman: We're making an investment in Havana.
+answerBot: i ' m sorry .
+-------
+question: Right.  Why?
+answerHuman: Well, I used to go to the Dodger on your nights, and I saw you're doing it again and that your putting out a record, and it's sort of a then-and- now story against the backdrop of the Chicago music scene with the emphasis on now.
+answerBot: i ' m not sure .
+-------
+question: I always am.
+answerHuman: Don't get hurt.
+answerBot: and you ' re not going to marry me ?
+-------
+question: Hi.
+answerHuman: Hi.
+answerBot: hi .
+-------
+question: The same as Jane McKenna.
+answerHuman: Thanks for the jolly news. I thought maybe you'd left town by now. You kind of just disappeared. But you boys from Tuscarora have a habit of disappearing, don't you?
+answerBot: i ' m not voting for you .
+-------
+question: Keep it clean, Rambo, or I'll nail your hide to the shed.
+answerHuman: You got it, sir.
+answerBot: the wound is over .
+-------
+question: We got it together, Jake....
+answerHuman: Okay...we got it together....
+answerBot: what ' s that ?
+-------
+question: I'll tell you who doesn't know, cute girls don't know.
+answerHuman: Do Peter Sellers again.
+answerBot: i don ' t know .
+-------
+question: Hey!
+answerHuman: Han, don't. It'll be all right.
+answerBot: mollie , i ' m sorry .
+-------
+question: He was just doing his job.
+answerHuman: So was I.
+answerBot: so did he .
+-------
+question: With me?
+answerHuman: Don't you remember?  He has this bad tooth - it got impacted - the whole jaw swole up -
+answerBot: yeah ?
+-------
+question: Well the police are going to want to speak to you. You know that.
+answerHuman: Oh Christ.
+answerBot: oh .
+-------
+question: Well what's the use of hiring an expert if your not going to listen to him?
+answerHuman: Because "Dr. Grant" isn't looking for Eric. Dr. Grant is looking for the coast.
+answerBot: he ' s dead .
+-------
+question: About ten. Fifteen is good.
+answerHuman: Fifteen for me.
+answerBot: sixty - five .
+-------
+question: Yellow Room where they dance -- 
+answerHuman: You're very funny --
+answerBot: i ' m parked in the territories in the van .
+-------
+question: You ain't lying.
+answerHuman: When you go busting your fists against a stone wall, you're not using your brains. Cause that's what the white man wants you to do. Look at you.
+answerBot: i ' m not voting for you .
+-------
+question: Now, *Susan*--that's really a *pretty* name--
+answerHuman: Susan! Susan Paine--that's beautiful--
+answerBot: yes , ma ' am .
+-------
+question: What kind of creature is this? Last night you two were spooning -
+answerHuman: Don't remind me.
+answerBot: i ' m sorry .
+-------
+question: I wanna patch in from...
+answerHuman: ...here!
+answerBot: . . . gger .
+-------
+question: Don't hurt him.
+answerHuman: Where's the nearest hospital?
+answerBot: he ' s dead .
+-------
+question: We're nearly there, sir.
+answerHuman: Eh ... don't call him sir, he's got enough delusions of power as it is.
+answerBot: we ' re not going anywhere .
+-------
+question: Well, Nick, that's your name, isn't it?
+answerHuman: What's that got to do with it? I don't know you from Adam's off ox.  Hey, you! Rummy! Come here! Come here!
+answerBot: yeah .
+-------
+question: What?
+answerHuman: That was Marvin Untermeyer.
+answerBot: parlay !
+-------
+question: Someone should give you a raise.
+answerHuman: Actually, sir, you could be that someone.
+answerBot: you ' re hurting me .
+-------
+question: I should go with her, Sandy.
+answerHuman: Go ahead.
+answerBot: go ahead .
+-------
+question: See you tomorrow.
+answerHuman: See you.  Bye.  Bye Diane.
+answerBot: bye .
+-------
+question: I hope the best for you, Miss Dwiggins, with your school and your paper and all.
+answerHuman: Where will he go?
+answerBot: and what is it ?
+-------
+question: So, do you play the piano?
+answerHuman: Not a lick. I look at a piano and I see black and white keys, three pedals and a box of wood. Beethoven, Mozart, they looked at it and it just made sense to them. They saw a piano and they could play. I couldn't paint you a picture, I probably can't hit the ball out of Fenway Park and I can't play the piano--
+answerBot: i ' m not sure .
+-------
+question: Madmartigan, I need your help.
+answerHuman: My help?  A great magician like you?  You don't need any help.
+answerBot: what ?
+-------
+question: Well you should at least try a little bit.
+answerHuman: Then I'll throw up a little bit.
+answerBot: i ' m sorry .
+-------
+question: Oh, certainly. It's to protect the species.
+answerHuman: I imagine that's very important. Especially during the moulting season.
+answerBot: what ' s the title ?
+-------
+question: Thank you, Mom! Thanks, Dad!
+answerHuman: Blow out the candles!
+answerBot: i ' m sorry , but i ' m not accepting .
+-------
+question: Good. Hart, get him whatever it is they drink, a cokearama?
+answerHuman: Ta.
+answerBot: ta .
+-------
+question: Mom, I want to go to the fair ...
+answerHuman: You can't expect us to stay here --
+answerBot: you ' re not reman .
+-------
+question: You! How can I ever get any fame playing you!
+answerHuman: Dewey, what the hell is she rambling about now? What's wrong Jen, see yourself on one of those USA NETWORK winners you did and realize how badly you suck at acting?
+answerBot: i ' m sorry , i ' m sorry .
+-------
+question: Paper.
+answerHuman: It's a fortune box.
+answerBot: i ' m sure sang .
+-------
+question: Well, if that's possible ...
+answerHuman: It's possible. Just negotiate.
+answerBot: i ' m sorry .
+-------
+question: You are cold.
+answerHuman: You're damn right I am.
+answerBot: i ' m sorry .
+-------

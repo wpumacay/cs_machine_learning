@@ -651,3 +651,33 @@ You can check here that we use the **getTestBacth** method instead, by passing t
 ## <a name="section3"></a> Results and thoughts
 
 
+The last training we made was using the configuration given in the [config.py](ml/config.py) file :
+
+* Cell used : GRU
+* Number of layers : 2
+* Number of hidden units per layer : 512
+* Input sequence length : 20
+* Output sequence length : 20
+* Use attention : No
+* Dropout : 0.9
+* Embeddings size : 100
+* Softmax samples : 512
+* Learning rate : 0.002
+* Batch size : 256
+* Epochs : 50
+
+After approx. 8 hours of training, we got the following results :
+
+![demo](_img/testChatbot.gif)
+
+A video of the demo can be found [**here**](https://www.youtube.com/watch?v=5PlFZtVXz0k&feature=youtu.be).
+
+As you can see, the bot respond ok to some questions, but it also fails spectacularly at some others. When it started learning it just said some random stuff, saying blocks of the same words and whitout giving the end tokem.
+
+After training it gave sentences that had some meaning. It learnt a kind of language model as well as the capacity of knowing when to stop a sentence. At first, we forgot to ommit the following tokens after the stop token, so there were quite some other words that didn't have much relation to the core answer.
+
+We also tried making a test of each training question-answer, and we noticed that it didn't actually match the human target answers.
+
+What ne noticed was that some questions-answers have some context dependency to some other information that is hidden to the model. Usually a conversation consists of a long sequence of sequences, and some of these form groups that share some common context in the conversation. I think that we might be failing at giving the model this kind of information dependency. In this context attention doesn't help as it works in a given sequence fed into the model, not a sequence of sequences.
+
+You can check these questions-answers in the testHardMemory.txt file.
